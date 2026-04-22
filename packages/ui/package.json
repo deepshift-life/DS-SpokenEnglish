@@ -1,0 +1,12 @@
+{
+  "name": "@ds/ui",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" } },
+  "scripts": { "build": "tsc", "dev": "tsc --watch", "clean": "rm -rf dist" },
+  "dependencies": { "@ds/types": "workspace:*", "react": "^19.0.0" },
+  "devDependencies": { "@types/react": "^19.0.0", "typescript": "^5.8.0" },
+  "peerDependencies": { "react": "^19.0.0" }
+}
