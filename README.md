@@ -70,6 +70,8 @@ http://localhost:3000
 3. 在 `Build and deployment` 中选择 `GitHub Actions`。
 4. 等待 `Deploy GitHub Pages preview` 工作流完成。
 
+如果部署阶段出现 `Creating Pages deployment failed` / `HttpError: Not Found`，通常表示仓库还没有启用 GitHub Pages，先完成第 2～3 步后重新运行 workflow。
+
 发布地址：
 
 ```txt
