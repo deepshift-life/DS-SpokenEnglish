@@ -5,6 +5,7 @@
     "dev": "turbo dev",
     "dev:web": "turbo dev --filter=web",
     "build": "turbo build",
+    "build:pages": "node scripts/build-static-preview.mjs",
     "lint": "turbo lint",
     "test": "turbo test",
     "clean": "turbo clean",

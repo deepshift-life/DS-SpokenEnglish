@@ -57,6 +57,31 @@ pnpm dev:web
 http://localhost:3000
 ```
 
+## GitHub Pages 预览
+
+本仓库已内置 GitHub Pages 静态预览工作流：`.github/workflows/pages.yml`。
+
+由于 GitHub Pages 只能托管静态文件，预览版会保留主要页面、内置单元、跟读流程、复习和本地进度；服务端 API 相关能力会以提示或模拟数据降级，包括 AI 对话、AI 生成单元、TTS 服务端合成、ASR 转写、发音评分和百度网盘同步。
+
+启用步骤：
+
+1. 将代码推送到 GitHub 仓库的 `pages-preview` 分支。
+2. 打开仓库 `Settings` → `Pages`。
+3. 在 `Build and deployment` 中选择 `GitHub Actions`。
+4. 等待 `Deploy GitHub Pages preview` 工作流完成。
+
+发布地址：
+
+```txt
+https://deepshift-life.github.io/DS-SpokenEnglish/
+```
+
+本地验证静态预览构建：
+
+```bash
+pnpm build:pages
+```
+
 ## 环境变量
 
 环境变量示例位于 `apps/web/.env.local.example`。本地开发时复制为 `apps/web/.env.local` 后填写实际值。
@@ -112,4 +137,3 @@ pnpm gen:content
 ```bash
 pnpm --filter @ds/audio build
 ```
-

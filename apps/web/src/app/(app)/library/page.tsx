@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { DAILY_UNITS } from '@/lib/content'
+import { IS_STATIC_PREVIEW, STATIC_PREVIEW_NOTICE } from '@/lib/static-preview'
 import type { LearningUnit } from '@ds/types'
 import { useProgressStore } from '@/store/progress'
 
@@ -23,6 +24,11 @@ export default function LibraryPage() {
   const [error, setError] = useState('')
 
   async function handleSceneClick(scene: typeof SCENES[0]) {
+    if (IS_STATIC_PREVIEW) {
+      setError(`${scene.label} 的 AI 生成在静态预览版中不可用，请先体验下方内置单元。`)
+      return
+    }
+
     setGenerating(scene.id)
     setError('')
     try {
@@ -47,6 +53,12 @@ export default function LibraryPage() {
     <main className="max-w-lg mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-2">场景库</h1>
       <p className="text-slate-400 text-sm mb-6">选择场景，AI 即时生成专属练习单元</p>
+
+      {IS_STATIC_PREVIEW && (
+        <div className="mb-4 px-4 py-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-200 text-sm">
+          {STATIC_PREVIEW_NOTICE}
+        </div>
+      )}
 
       {error && (
         <div className="mb-4 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">

@@ -4,6 +4,10 @@ interface Props {
   params: Promise<{ packId: string }>
 }
 
+export function generateStaticParams() {
+  return [{ packId: 'demo' }]
+}
+
 export default async function ShadowingPage({ params }: Props) {
   const { packId } = await params
   return (

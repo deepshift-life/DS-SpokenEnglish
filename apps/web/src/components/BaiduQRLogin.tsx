@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { Spinner } from '@ds/ui'
+import { IS_STATIC_PREVIEW, STATIC_PREVIEW_NOTICE } from '@/lib/static-preview'
 
 type QRStatus = 'loading' | 'ready' | 'scanned' | 'expired' | 'error'
 
@@ -20,10 +22,27 @@ export function BaiduQRLogin() {
   }
 
   useEffect(() => {
-    // Baidu OAuth doesn't provide a QR code API directly —
-    // we open the auth URL in a popup and listen for the redirect.
+    if (IS_STATIC_PREVIEW) return
     setStatus('ready')
   }, [])
+
+  if (IS_STATIC_PREVIEW) {
+    return (
+      <div className="flex flex-col items-center gap-6">
+        <div className="w-56 rounded-2xl bg-slate-800 border border-slate-700 p-6 text-center">
+          <p className="text-4xl mb-3">🔒</p>
+          <p className="text-white font-medium mb-2">静态预览模式</p>
+          <p className="text-slate-400 text-sm leading-relaxed">{STATIC_PREVIEW_NOTICE}</p>
+        </div>
+        <Link
+          href="/home"
+          className="w-56 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-medium text-center transition-colors"
+        >
+          直接开始
+        </Link>
+      </div>
+    )
+  }
 
   function handleLogin() {
     const url = authUrl()
@@ -32,11 +51,9 @@ export function BaiduQRLogin() {
 
     setStatus('scanned')
 
-    // Poll for popup close (redirect back sets cookie via API route)
     const timer = setInterval(() => {
       if (popup.closed) {
         clearInterval(timer)
-        // Reload to trigger middleware auth check
         window.location.href = '/home'
       }
     }, 500)
@@ -71,9 +88,9 @@ export function BaiduQRLogin() {
 
       <p className="text-slate-600 text-xs">登录即可同步学习进度</p>
 
-      <a href="/home" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">
+      <Link href="/home" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">
         暂不登录，直接开始 →
-      </a>
+      </Link>
     </div>
   )
 }

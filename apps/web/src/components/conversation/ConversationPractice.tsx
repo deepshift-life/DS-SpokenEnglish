@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { startRecording } from '@ds/audio'
 import type { RecordingHandle } from '@ds/audio'
 import { VolumeBar, Spinner } from '@ds/ui'
+import { IS_STATIC_PREVIEW } from '@/lib/static-preview'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -18,6 +19,17 @@ const SCENES = [
   { id: 'smalltalk', label: '日常闲聊', prompt: 'casual small talk with a new friend' },
   { id: 'free', label: '自由对话', prompt: '' },
 ]
+
+function getStaticReply(scenePrompt: string, msgs: Message[]) {
+  const lastUser = [...msgs].reverse().find(m => m.role === 'user')?.content ?? ''
+  if (!lastUser || lastUser === 'Hi, let\'s practice!') {
+    return scenePrompt
+      ? `Great! Let's practice ${scenePrompt}. I'll play the partner. What would you say first?`
+      : `Great! Let's practice a natural English conversation. What topic should we start with?`
+  }
+
+  return `Nice. In a full deployment, the AI would respond to: "${lastUser}". For this GitHub Pages preview, try rewriting your sentence more naturally and send another turn.`
+}
 
 export function ConversationPractice() {
   const [scene, setScene] = useState<string | null>(null)
@@ -45,6 +57,18 @@ export function ConversationPractice() {
     setStreaming(true)
     const placeholder: Message = { role: 'assistant', content: '' }
     setMessages(prev => [...prev, placeholder])
+
+    if (IS_STATIC_PREVIEW) {
+      await new Promise(resolve => setTimeout(resolve, 500))
+      const reply = getStaticReply(scenePrompt ?? SCENES.find(s => s.id === scene)?.prompt ?? '', msgs)
+      setMessages(prev => {
+        const next = [...prev]
+        next[next.length - 1] = { role: 'assistant', content: reply }
+        return next
+      })
+      setStreaming(false)
+      return
+    }
 
     try {
       const res = await fetch('/api/chat', {
@@ -104,6 +128,11 @@ export function ConversationPractice() {
           if (blob.size > 0) {
             setTranscribing(true)
             try {
+              if (IS_STATIC_PREVIEW) {
+                await new Promise(resolve => setTimeout(resolve, 500))
+                setInput('I would like to practice this sentence.')
+                return
+              }
               const fd = new FormData()
               fd.append('audio', blob, 'recording.webm')
               fd.append('language', 'en')

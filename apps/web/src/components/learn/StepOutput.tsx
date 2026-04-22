@@ -6,6 +6,7 @@ import { startRecording, formatTime } from '@ds/audio'
 import type { RecordingHandle } from '@ds/audio'
 import { ScoreRing, VolumeBar, Button } from '@ds/ui'
 import { useProgressStore } from '@/store/progress'
+import { IS_STATIC_PREVIEW } from '@/lib/static-preview'
 
 const ROUNDS = [4, 3, 2, 1]
 
@@ -58,7 +59,9 @@ export function StepOutput({ unit, onNext }: Props) {
       recHandleRef.current = null
     }
 
-    if (blob && blob.size > 0) {
+    if (IS_STATIC_PREVIEW) {
+      setScore({ fluency: 82, accuracy: 78, completeness: 86, overall: 82, mock: true } as SpeechScore & { mock: boolean })
+    } else if (blob && blob.size > 0) {
       try {
         const fd = new FormData()
         fd.append('audio', blob, 'recording.webm')
